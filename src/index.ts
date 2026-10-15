@@ -129,18 +129,19 @@ export default Plugin.define({
       return []
     }
 
-    const credentials = (): { token: string; chat: string } | undefined => {
-      const fileCandidates = [
+    /** Rutas en las que el plugin busca el .env con las credenciales de Telegram. */
+    const envFileCandidates = (): string[] =>
+      [
         options.envFile,
         process.env.JARVIS_ENV_FILE,
         resolve(HERE, "..", ".env"),
         resolve(locationDir, ".env"),
       ].filter((file): file is string => !!file)
 
-      const fileEnv = fileCandidates.map(readEnvFile).reduce(
-        (merged, next) => ({ ...merged, ...next }),
-        {} as Record<string, string>,
-      )
+    const credentials = (): { token: string; chat: string } | undefined => {
+      const fileEnv = envFileCandidates()
+        .map(readEnvFile)
+        .reduce((merged, next) => ({ ...merged, ...next }), {} as Record<string, string>)
 
       const token =
         process.env.TELEGRAM_BOT_TOKEN || process.env.JARVIS_TELEGRAM_BOT_TOKEN || fileEnv.TELEGRAM_BOT_TOKEN
@@ -148,6 +149,23 @@ export default Plugin.define({
         process.env.TELEGRAM_CHAT_ID || process.env.JARVIS_TELEGRAM_CHAT_ID || fileEnv.TELEGRAM_CHAT_ID
 
       return token && chat ? { token, chat } : undefined
+    }
+
+    /** Diagnóstico para el error de "Telegram no configurado": qué se miró y qué había. */
+    const envDiagnostics = (): string => {
+      const paths = envFileCandidates().map((file) => {
+        const exists = existsSync(file)
+        const keys = exists ? Object.keys(readEnvFile(file)).length : 0
+        return `  ${exists ? "existe    " : "no existe "} (${keys} claves): ${file}`
+      })
+      return [
+        "Rutas de .env comprobadas:",
+        ...paths,
+        `process.env: TELEGRAM_BOT_TOKEN=${process.env.TELEGRAM_BOT_TOKEN ? "si" : "no"}, ` +
+          `TELEGRAM_CHAT_ID=${process.env.TELEGRAM_CHAT_ID ? "si" : "no"}`,
+        `locationDir: ${locationDir}`,
+        `HERE (plugin): ${HERE}`,
+      ].join("\n")
     }
 
     // ── Herramientas ────────────────────────────────────────────────────────
@@ -282,7 +300,8 @@ export default Plugin.define({
             return {
               content:
                 "Telegram no está configurado. Faltan TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID " +
-                "(en process.env o en un .env — ver docs/TELEGRAM.md). El mensaje NO se ha enviado.",
+                "(en process.env o en un .env — ver docs/TELEGRAM.md). El mensaje NO se ha enviado.\n\n" +
+                envDiagnostics(),
             }
           }
 

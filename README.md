@@ -31,8 +31,11 @@ Todo está **probado y funcionando** en local con OpenCode **v2.0.26**:
 - ✅ Catálogo HTTP de skills generado (`docs/skills/`)
 - ✅ `sync.ps1 -DryRun` resuelve bien el destino
 - ✅ **Publicado**: <https://github.com/FreedomStrik10/jarvis-kit> (rama `main`)
-- ✅ **Pages activo**: `https://freedomstrik10.github.io/jarvis-kit/skills/` → HTTP 200
-- ⬜ **Pendiente**: consumirlo desde *Trading With IA* y *Nuestro Hogar*
+- ✅ **Pages activo**: `https://freedomstrik10.github.io/jarvis-kit/skills/` → HTTP 200 (`.md` incluido, con `.nojekyll`)
+- ✅ **Trading With IA enlazado** — plugin por `github:`, skill por Pages, agente sincronizado, `jarvis_estado` probado en vivo (régimen BAJISTA, 0 posiciones)
+- ✅ **Nuestro Hogar enlazado** — mismo camino, `opencode.json` creado desde cero, filtro `proyecto: "hogar"` probado
+- ✅ **Telegram activo** — `jarvis.alerta` enviado y entregado al chat del bot de Trading
+- ⬜ **Pendiente**: permisos `jarvis.*` para el agente `qa` de Trading (el bot de Telegram, hoy en `* deny`)
 
 ## Estructura
 

@@ -161,3 +161,5 @@ proyectos enlazados"*, revisa el paso **d**.
 | El skill no se actualiza en otra máquina | Sube el catálogo (`npm run catalogo`) — `version` es un hash del contenido. |
 | `failed to download skill file … 404` en el log | Falta `docs/.nojekyll`. Jekyll convierte los `.md` a `.html` y el skill 404. |
 | `index.json` sirve pero el skill no instala | Mismo motivo: comprueba que `<base>/<nombre>/<nombre>.md` da 200. |
+| `No tool named "jarvis.estado" is currently available` | **Ruido de Code Mode, no es un fallo.** El modelo intenta primero llamarlo por nombre directo; al llamarlo dentro de `execute` (`return await tools.jarvis.estado({…})`) funciona. Verás 1–2 intentos fallidos antes. No hay que tocar nada. |
+| El `.env` tiene las claves pero `credentials()` da `undefined` | Revisa el formato: `clave=` y el valor en **la misma línea**. En PowerShell, `"texto" + $x,` dentro de `@(...)` separa los elementos (la coma prima sobre `+`). Usa `("texto" + $x)`. |

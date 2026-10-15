@@ -47,6 +47,17 @@ Comprueba que responde:
 https://freedomstrik10.github.io/jarvis-kit/skills/index.json
 ```
 
+> ⚠️ **Obligatorio: `docs/.nojekyll`** (fichero vacío, ya incluido en el repo).
+> Sin él, GitHub Pages procesa los `.md` con **Jekyll** y los sirve convertidos a
+> `.html`: el `index.json` funciona, pero OpenCode recibe **404** al bajar
+> `skills/jarvis/jarvis.md` y el skill no se instala. Con `.nojekyll`, Pages
+> sirve los ficheros tal cual.
+>
+> Verificación rápida — esto tiene que dar 200, no 404:
+> ```
+> https://freedomstrik10.github.io/jarvis-kit/skills/jarvis/jarvis.md
+> ```
+
 Si cambias un skill, regenera y sube:
 
 ```powershell
@@ -148,3 +159,5 @@ proyectos enlazados"*, revisa el paso **d**.
 | Error de sintaxis rarísimo en un `.ps1` con acentos | Falta el **BOM UTF-8**. PowerShell 5.1 lo lee como ANSI y un `—` se vuelve comilla rizada. |
 | `plugin list` sale vacío | Solo lista plugins **globales** instalados con `plugin add`; los de ruta en la config no aparecen. |
 | El skill no se actualiza en otra máquina | Sube el catálogo (`npm run catalogo`) — `version` es un hash del contenido. |
+| `failed to download skill file … 404` en el log | Falta `docs/.nojekyll`. Jekyll convierte los `.md` a `.html` y el skill 404. |
+| `index.json` sirve pero el skill no instala | Mismo motivo: comprueba que `<base>/<nombre>/<nombre>.md` da 200. |

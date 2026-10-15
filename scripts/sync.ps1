@@ -95,5 +95,5 @@ if ($actions.Count -eq 0) {
 
 Write-Host ""
 Write-Host "Recordatorio: skills y commands NO se copian — llegan por la nube." -ForegroundColor Cyan
-Write-Host "  skills  -> opencode.json(c):  `"skills`": [`"https://USUARIO.github.io/REPO/skills/`"]"
-Write-Host "  plugin  -> `"plugins`": [`"github:USUARIO/REPO`"]  (o: opencode plugin add github:USUARIO/REPO)"
+Write-Host "  skills  -> opencode.json(c):  `"skills`": [`"https://freedomstrik10.github.io/jarvis-kit/skills/`"]"
+Write-Host "  plugin  -> `"plugins`": [`"github:FreedomStrik10/jarvis-kit`"]  (o: opencode plugin add github:FreedomStrik10/jarvis-kit)"

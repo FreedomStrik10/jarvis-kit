@@ -1,22 +1,22 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "//": "Fragmento para copiar al opencode.json(c) de CUALQUIER proyecto que quiera usar el Jarvis. Sustituye USUARIO/REPO por los tuyos.",
+  "//": "Fragmento ya configurado para ESTE repositorio. Cópialo al opencode.json(c) del proyecto que quiera usar el Jarvis. Las rutas absolutas son de esta máquina.",
 
   "// SKILL": "100 % en la nube — catálogo HTTP servido por GitHub Pages. No ocupa sitio local.",
-  "skills": ["https://USUARIO.github.io/REPO/skills/"],
+  "skills": ["https://freedomstrik10.github.io/jarvis-kit/skills/"],
 
   "// PLUGIN": "Trae los comandos /jarvis y /alerta + las herramientas jarvis_estado y jarvis_alerta.",
-  "// SI la URL de git no la admite tu versión, instálala una sola vez con:  opencode plugin add github:USUARIO/REPO   (va al config global)",
+  "// SI la URL de git no la admite tu versión, instálala una sola vez con:  opencode plugin add github:FreedomStrik10/jarvis-kit   (va al config global)",
   "plugins": [
     {
-      "package": "github:USUARIO/REPO",
+      "package": "github:FreedomStrik10/jarvis-kit",
       "options": {
         "//": "Rutas ABSOLUTAS de ESTA máquina. Esta es la capa local inevitable: los agents y las rutas no se pueden servir por URL.",
         "projects": [
           {
             "id": "trading",
             "name": "Trading With IA",
-            "path": "C:\\Users\\TU_USUARIO\\Downloads\\Trading With IA",
+            "path": "C:\\Users\\adria\\Downloads\\Trading With IA",
             "files": ["trading/estado.json", "trading/guardian-estado.json"],
             "keys": [
               "fecha",
@@ -31,7 +31,7 @@
           {
             "id": "hogar",
             "name": "Nuestro Hogar",
-            "path": "C:\\Users\\TU_USUARIO\\Documents\\Proyecto predeterminado\\nuestro-hogar",
+            "path": "C:\\Users\\adria\\Documents\\Proyecto predeterminado\\nuestro-hogar",
             "files": ["08-boceto/NOTAS-DE-ENTREGA-BOCETO.md"],
             "lines": 45
           }

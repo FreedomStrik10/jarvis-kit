@@ -1,92 +1,90 @@
 # GitHub: autenticar y publicar
 
-Esta máquina **no está autenticada** en GitHub. Comprobado al construir el repo:
+Estado real de esta máquina tras publicar el repo:
 
-- `git` ✅ instalado (`C:\Program Files\Git\cmd\git.exe`)
-- `gh` ❌ **no instalado**
-- `git config user.name` / `user.email` ❌ **sin definir**
-- Credential helper ❌ **ninguno** — no hay credenciales guardadas
-
-Hay dos caminos. **Opción A** es la más rápida.
-
----
-
-## Opción A — Token personal (PAT), sin instalar nada
-
-1. Abre <https://github.com/settings/tokens> → **Generate new token (classic)**
-2. Marca el alcance **`repo`** (y `workflow` si algún día usas Actions)
-3. Copia el token (`ghp_…`) — solo se muestra una vez
-4. Configura identidad y remoto:
-
-```powershell
-git config --global user.name  "Tu Nombre"
-git config --global user.email "tu@email@example.com"
-
-cd "C:\Users\adria\Downloads\Posible Jarvis"
-git init
-git remote add origin https://github.com/TU_USUARIO/jarvis-kit.git
-```
-
-5. Al hacer `push`, Windows **Credential Manager** te pedirá el usuario y la
-   contraseña → pega el **token** como contraseña. Queda guardado.
-
-   Si no te lo pide, regístralo de una vez:
-
-```powershell
-git config --global credential.helper manager
-```
-
-## Opción B — GitHub CLI
-
-```powershell
-winget install GitHub.cli
-# cerrar y abrir la terminal
-gh auth login --web
-```
-
-Después publicar es directo:
-
-```powershell
-cd "C:\Users\adria\Downloads\Posible Jarvis"
-gh repo create jarvis-kit --public --source=. --push
-```
+| Componente | Estado |
+|---|---|
+| `git` | ✅ 2.55.0 (`C:\Program Files\Git\cmd\git.exe`) |
+| `gh` (GitHub CLI) | ✅ 2.102.0 — instalado con `winget install GitHub.cli` |
+| `gh auth login` | ✅ **Logueado como `FreedomStrik10`** |
+| `credential.helper` | ✅ `manager` (Windows Credential Manager) |
+| `init.defaultBranch` | ✅ `main` |
+| Repo | ✅ `https://github.com/FreedomStrik10/jarvis-kit` (público, rama `main`) |
+| GitHub Pages | ✅ activo desde `/docs` → `https://freedomstrik10.github.io/jarvis-kit/` |
 
 ---
 
-## Antes del primer push
+## Cómo se autenticó
 
-Comprueba que **no se suben secretos ni rutas de esta máquina**:
+**No se usó ningún token.** Ruta con GitHub CLI:
+
+```powershell
+winget install --id GitHub.cli -e --accept-source-agreements --accept-package-agreements
+gh auth login --hostname github.com --git-protocol https --web
+```
+
+`--web` imprime un código de un solo uso, abre el navegador en
+<https://github.com/login/device> y espera a que autorices. **Ninguna credencial
+pasa por el historial de comandos.**
+
+---
+
+## Lo que NO funcionó (por si lo intentas otra vez)
+
+### 1. Un PAT *fine-grained* (`github_pat_…`) no crea repositorios
+
+Intenté `POST /user/repos` con un PAT fine-grained → **HTTP 401**. Esas tokens
+no pueden crear repos. Además, tienen otra trampa:
+
+> Si el repo **aún no existe**, un fine-grained PAT **no puede darle acceso** —
+> solo cubre repos ya seleccionados. El alcance tendría que ser
+> **All repositories** y los permisos **Contents: Read and write**.
+
+Y hay más: al probarlo, el token que me pasaron **dejó de valer** en cuestión
+de segundos (`Bad credentials` en todo, incluido `/user` que antes funcionaba).
+Si vas a generar uno, guárdalo tú y **no lo pegues en ningún chat** —
+GitHub revoca tokens expuestos y además queda en el historial.
+
+**Resumen**: para esto, `gh auth login` es mejor que cualquier PAT.
+
+### 2. `git init` creó `master`, no `main`
+
+git 2.55 en Windows sigue por defecto con `master`. Fix:
+
+```powershell
+git config --global init.defaultBranch main   # para los próximos repos
+git branch -m master main                     # para el actual
+git push -u origin main
+git push origin --delete master
+```
+
+No puedes borrar la rama que es la *por defecto* del repo: primero cambia
+`default_branch` con `gh api repos/OWNER/REPO -X PATCH -f default_branch=main`.
+
+---
+
+## Reproducir en otra máquina
+
+```powershell
+winget install --id GitHub.cli -e
+gh auth login --hostname github.com --git-protocol https --web
+git config --global init.defaultBranch main
+```
+
+Ya dentro del repo, verificar que no se suben secretos:
 
 ```powershell
 git status --ignored --short
 ```
 
-Debe marcar como ignorados:
+Debe marcar como ignorados `jarvis.projects.json`, `.env` y `node_modules/`.
 
-```
-!! jarvis.projects.json     ← rutas absolutas de TU máquina
-!! .env                     ← tokens
-!! node_modules/
-```
+---
 
-`.gitignore` ya los cubre. **Si `jarvis.projects.json` aparece sin `!!`, no hagas
-push**: revisa el `.gitignore` primero.
-
-Después:
+## Referencia
 
 ```powershell
-git add -A
-git commit -m "jarvis: cerebro unificador v0.1"
-git push -u origin main
+gh repo create jarvis-kit --public --source=. --remote=origin --push
+gh api repos/FreedomStrik10/jarvis-kit/pages -X POST -f "source[branch]=main" -f "source[path]=/docs"
+gh auth status
 ```
-
-## Verificación final
-
-```powershell
-opencode plugin add github:TU_USUARIO/jarvis-kit
-opencode plugin list
-```
-
-Debe aparecer `github:TU_USUARIO/jarvis-kit`. Y en el navegador,
-`https://TU_USUARIO.github.io/jarvis-kit/skills/index.json` debe devolver el
-catálogo (tras activar Pages desde `/docs`, ver [INSTALACION.md](INSTALACION.md)).

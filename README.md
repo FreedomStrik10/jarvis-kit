@@ -30,7 +30,9 @@ Todo está **probado y funcionando** en local con OpenCode **v2.0.26**:
 - ✅ `jarvis_estado` devuelve datos en vivo de los dos proyectos
 - ✅ Catálogo HTTP de skills generado (`docs/skills/`)
 - ✅ `sync.ps1 -DryRun` resuelve bien el destino
-- ⬜ **Pendiente**: push a GitHub y carga por `github:` URL (falta autenticación)
+- ✅ **Publicado**: <https://github.com/FreedomStrik10/jarvis-kit> (rama `main`)
+- ✅ **Pages activo**: `https://freedomstrik10.github.io/jarvis-kit/skills/` → HTTP 200
+- ⬜ **Pendiente**: consumirlo desde *Trading With IA* y *Nuestro Hogar*
 
 ## Estructura
 

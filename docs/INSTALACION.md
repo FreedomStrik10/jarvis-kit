@@ -25,7 +25,7 @@ git init
 git add -A
 git commit -m "jarvis: cerebro unificador v0.1"
 # crear el repo en github.com y luego:
-git remote add origin https://github.com/TU_USUARIO/jarvis-kit.git
+git remote add origin https://github.com/FreedomStrik10/jarvis-kit.git
 git push -u origin main
 ```
 
@@ -44,7 +44,7 @@ git status --ignored      # ambos deben aparecer como ignorados
 Comprueba que responde:
 
 ```
-https://TU_USUARIO.github.io/jarvis-kit/skills/index.json
+https://freedomstrik10.github.io/jarvis-kit/skills/index.json
 ```
 
 Si cambias un skill, regenera y sube:
@@ -62,7 +62,7 @@ git add docs/skills && git commit -m "skill: actualizar catálogo" && git push
 ### a) El plugin (commands + herramientas)
 
 ```powershell
-opencode plugin add github:TU_USUARIO/jarvis-kit
+opencode plugin add github:FreedomStrik10/jarvis-kit
 ```
 
 Eso lo instala en el **config global** (`~/.config/opencode/opencode.json`), así
@@ -77,7 +77,7 @@ Añade al `opencode.json(c)` del proyecto:
 
 ```jsonc
 {
-  "skills": ["https://TU_USUARIO.github.io/jarvis-kit/skills/"]
+  "skills": ["https://freedomstrik10.github.io/jarvis-kit/skills/"]
 }
 ```
 
@@ -102,7 +102,7 @@ lo que permite versionarlo junto al resto:
 ```jsonc
 "plugins": [
   {
-    "package": "github:TU_USUARIO/jarvis-kit",
+    "package": "github:FreedomStrik10/jarvis-kit",
     "options": {
       "projects": [
         { "id": "trading", "name": "Trading With IA",

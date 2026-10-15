@@ -12,7 +12,7 @@
        para que OpenCode refresque la cache solo cuando algo cambia
 
   Base URL tras activar GitHub Pages (carpeta /docs):
-      https://USUARIO.github.io/REPO/skills/
+      https://freedomstrik10.github.io/jarvis-kit/skills/
 
 .EXAMPLE
   .\scripts\build-catalog.ps1
@@ -97,10 +97,14 @@ $index = [ordered]@{
 }
 
 $indexPath = Join-Path $dstRoot "index.json"
-$index | ConvertTo-Json -Depth 6 | Set-Content -Path $indexPath -Encoding UTF8
+$json = $index | ConvertTo-Json -Depth 6
+
+# UTF-8 SIN BOM: `Set-Content -Encoding UTF8` en Windows PowerShell 5.1 escribe
+# un BOM que rompe JSON.parse. JSON no admite BOM.
+[System.IO.File]::WriteAllText($indexPath, $json, (New-Object System.Text.UTF8Encoding $false))
 
 $hasher.Dispose()
 
 Write-Host ""
 Write-Host ("Catalogo escrito: {0} ({1} skill(s))" -f $indexPath, $entries.Count)
-Write-Host "Base URL esperada: https://USUARIO.github.io/REPO/skills/"
+Write-Host "Base URL: https://freedomstrik10.github.io/jarvis-kit/skills/"

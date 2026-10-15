@@ -1,0 +1,45 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "//": "Fragmento para copiar al opencode.json(c) de CUALQUIER proyecto que quiera usar el Jarvis. Sustituye USUARIO/REPO por los tuyos.",
+
+  "// SKILL": "100 % en la nube — catálogo HTTP servido por GitHub Pages. No ocupa sitio local.",
+  "skills": ["https://USUARIO.github.io/REPO/skills/"],
+
+  "// PLUGIN": "Trae los comandos /jarvis y /alerta + las herramientas jarvis_estado y jarvis_alerta.",
+  "// SI la URL de git no la admite tu versión, instálala una sola vez con:  opencode plugin add github:USUARIO/REPO   (va al config global)",
+  "plugins": [
+    {
+      "package": "github:USUARIO/REPO",
+      "options": {
+        "//": "Rutas ABSOLUTAS de ESTA máquina. Esta es la capa local inevitable: los agents y las rutas no se pueden servir por URL.",
+        "projects": [
+          {
+            "id": "trading",
+            "name": "Trading With IA",
+            "path": "C:\\Users\\TU_USUARIO\\Downloads\\Trading With IA",
+            "files": ["trading/estado.json", "trading/guardian-estado.json"],
+            "keys": [
+              "fecha",
+              "fase",
+              "mercado_abierto",
+              "sesion_actual",
+              "posiciones_abiertas",
+              "tareas_pendientes",
+              "equity_referencia"
+            ]
+          },
+          {
+            "id": "hogar",
+            "name": "Nuestro Hogar",
+            "path": "C:\\Users\\TU_USUARIO\\Documents\\Proyecto predeterminado\\nuestro-hogar",
+            "files": ["08-boceto/NOTAS-DE-ENTREGA-BOCETO.md"],
+            "lines": 45
+          }
+        ]
+      }
+    }
+  ],
+
+  "// AGENT": "Los agents NO aceptan URL en V2. Ejecuta  .\\scripts\\sync.ps1 -Destino <ruta-del-proyecto>  para bajar .opencode/agents/jarvis.md.",
+  "//": "Alternativa: define el agente inline con el campo `agents` (ver config/agents.snippet.jsonc)."
+}

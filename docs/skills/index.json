@@ -1,0 +1,11 @@
+﻿{
+    "skills":  [
+                   {
+                       "name":  "jarvis",
+                       "version":  "d7a69efebe56",
+                       "files":  [
+                                     "jarvis.md"
+                                 ]
+                   }
+               ]
+}

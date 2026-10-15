@@ -1,0 +1,31 @@
+{
+  "name": "opencode-jarvis-kit",
+  "version": "0.1.0",
+  "description": "Cerebro unificador de proyectos para OpenCode — estado enlazado, alertas y orquestación",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src",
+    "jarvis.projects.example.json"
+  ],
+  "scripts": {
+    "catalogo": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-catalog.ps1",
+    "sync": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/sync.ps1",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@opencode/plugin": "latest"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "jarvis",
+    "orchestration"
+  ],
+  "license": "MIT"
+}

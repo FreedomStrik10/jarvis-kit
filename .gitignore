@@ -1,0 +1,19 @@
+# Dependencias
+node_modules/
+
+# Registro de proyectos ENLAZADOS — rutas absolutas de ESTA máquina.
+# Nunca se sube: cada equipo debe crear el suyo propio.
+jarvis.projects.json
+
+# Secretos (Telegram, etc.)
+.env
+.env.*
+!.env.example
+
+# Salidas de build
+dist/
+*.tsbuildinfo
+
+# Sistema
+Thumbs.db
+.DS_Store

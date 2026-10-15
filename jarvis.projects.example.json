@@ -1,0 +1,40 @@
+{
+  "$comment": "PLANTILLA. Copia este archivo a `jarvis.projects.json` (está en .gitignore) y ajusta las rutas a TU máquina. Es el registro de los proyectos que el Jarvis orquesta. NO guardes aquí claves ni tokens.",
+  "projects": [
+    {
+      "id": "trading",
+      "name": "Trading With IA",
+      "path": "C:\\Users\\TU_USUARIO\\Downloads\\Trading With IA",
+      "files": [
+        "trading/estado.json",
+        "trading/guardian-estado.json",
+        "trading/parametros.json"
+      ],
+      "keys": [
+        "fecha",
+        "fase",
+        "mercado_abierto",
+        "proxima_apertura_et",
+        "sesion_actual",
+        "posiciones_abiertas",
+        "ordenes_pendientes",
+        "tareas_pendientes",
+        "equity_referencia",
+        "optimizacion",
+        "guardian",
+        "notificaciones"
+      ],
+      "lines": 30
+    },
+    {
+      "id": "hogar",
+      "name": "Nuestro Hogar",
+      "path": "C:\\Users\\TU_USUARIO\\Documents\\Proyecto predeterminado\\nuestro-hogar",
+      "files": [
+        "08-boceto/NOTAS-DE-ENTREGA-BOCETO.md",
+        "99-doc/PLAN-DE-RODAJE-Y-MONTAJE.md"
+      ],
+      "lines": 45
+    }
+  ]
+}

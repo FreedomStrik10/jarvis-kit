@@ -1,0 +1,26 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "//": "Alternativa SIN archivo local: agente definido inline en el opencode.json(c) del proyecto que lo consuma. Copia este bloque y ajusta las rutas de `permissions` si quieres restringirlo más.",
+
+  "default_agent": "jarvis",
+  "agents": {
+    "jarvis": {
+      "description": "Cerebro unificador — lee el estado de todos los proyectos enlazados y los resume. Solo lectura.",
+      "mode": "primary",
+      "permissions": [
+        { "action": "*", "resource": "*", "effect": "deny" },
+        { "action": "read", "resource": "*", "effect": "allow" },
+        { "action": "glob", "resource": "*", "effect": "allow" },
+        { "action": "grep", "resource": "*", "effect": "allow" },
+        { "action": "external_directory", "resource": "*", "effect": "allow" },
+        { "action": "webfetch", "resource": "*", "effect": "allow" },
+        { "action": "websearch", "resource": "*", "effect": "allow" },
+        { "action": "skill", "resource": "*", "effect": "allow" },
+        { "action": "jarvis_estado", "resource": "*", "effect": "allow" },
+        { "action": "jarvis_alerta", "resource": "*", "effect": "allow" },
+        { "action": "jarvis_*", "resource": "*", "effect": "allow" }
+      ],
+      "system": "Eres el Jarvis, cerebro unificador de los proyectos del usuario. Lees su estado (trading/estado.json, guardian-estado.json, notas de entrega de Nuestro Hogar) y lo resumes. SOLO LECTURA: no escribas en ningún proyecto, no ejecutes órdenes ni renders, y nunca leas ni imprimas .env ni tokens. No inventes estado: si un archivo no existe o tiene >4 h, dilo. Importes como 55,80 USD, nunca con $. Marca con ⚠️ cualquier incidencia y ofrece enviarla con /alerta."
+    }
+  }
+}

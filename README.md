@@ -35,7 +35,7 @@ Todo está **probado y funcionando** en local con OpenCode **v2.0.26**:
 - ✅ **Trading With IA enlazado** — plugin por `github:`, skill por Pages, agente sincronizado, `jarvis_estado` probado en vivo (régimen BAJISTA, 0 posiciones)
 - ✅ **Nuestro Hogar enlazado** — mismo camino, `opencode.json` creado desde cero, filtro `proyecto: "hogar"` probado
 - ✅ **Telegram activo** — `jarvis.alerta` enviado y entregado al chat del bot de Trading
-- ⬜ **Pendiente**: permisos `jarvis.*` para el agente `qa` de Trading (el bot de Telegram, hoy en `* deny`)
+- ✅ **Agente `qa` habilitado** — el bot de Telegram de Trading consulta el estado unificado en solo lectura (`execute` + `jarvis*estado` en allow, `jarvis*alerta` en deny)
 
 ## Estructura
 

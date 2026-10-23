@@ -17,6 +17,7 @@ Hoy enlaza:
 | `/jarvis` | Parte de estado unificado de todos los proyectos (solo lectura) |
 | `jarvis_estado` | La herramienta que lo alimenta — acepta `proyecto` para filtrar |
 | `/alerta <texto>` → `jarvis_alerta` | Envía un aviso a Telegram (`info` · `aviso` · `critico`) |
+| `/jarvis-salud` → `jarvis_salud` | Diagnóstico de salud (frescura de los archivos de estado) de todos los proyectos — ✅ / ⏳ / 🚨, solo lectura |
 | Agente `jarvis` | Orquestador primario, permisos de solo lectura |
 | Skill `jarvis` | Qué lee de cada proyecto y qué señales obligan a `⚠️` |
 

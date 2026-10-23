@@ -10,6 +10,7 @@
         "trading/guardian-estado.json",
         "trading/parametros.json"
       ],
+      "maxAgeMinutes": 1080,
       "keys": [
         "fecha",
         "fase",
@@ -34,6 +35,7 @@
         "08-boceto/NOTAS-DE-ENTREGA-BOCETO.md",
         "99-doc/PLAN-DE-RODAJE-Y-MONTAJE.md"
       ],
+      "maxAgeMinutes": 20160,
       "lines": 45
     }
   ]

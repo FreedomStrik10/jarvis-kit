@@ -15,6 +15,8 @@ export interface ProjectDef {
   path: string
   /** Archivos de estado relativos a `path`, en orden de prioridad. */
   files: string[]
+  /** Edad máxima "sana" en minutos para los archivos de este proyecto (por defecto 240). */
+  maxAgeMinutes?: number
   /** Claves a extraer si el archivo primario es JSON. Si se omite, las 15 primeras. */
   keys?: string[]
   /** Líneas a mostrar si el archivo es Markdown. */
@@ -129,6 +131,27 @@ export default Plugin.define({
       return []
     }
 
+    /** Filtra proyectos por id o nombre parcial; error legible si no hay coincidencias. */
+    const seleccionar = (
+      projects: ProjectDef[],
+      proyecto?: string,
+    ): { selected: ProjectDef[]; error?: string } => {
+      if (!proyecto) return { selected: projects }
+      const selected = projects.filter(
+        (project) =>
+          project.id === proyecto ||
+          project.name.toLowerCase().includes(proyecto.toLowerCase()),
+      )
+      return selected.length
+        ? { selected }
+        : {
+            selected: [],
+            error: `Proyecto "${proyecto}" no está enlazado. Enlazados: ${projects
+              .map((project) => project.id)
+              .join(", ")}`,
+          }
+    }
+
     /** Rutas en las que el plugin busca el .env con las credenciales de Telegram. */
     const envFileCandidates = (): string[] =>
       [
@@ -206,21 +229,8 @@ export default Plugin.define({
             }
           }
 
-          const selected = proyecto
-            ? projects.filter(
-                (project) =>
-                  project.id === proyecto ||
-                  project.name.toLowerCase().includes(proyecto.toLowerCase()),
-              )
-            : projects
-
-          if (proyecto && selected.length === 0) {
-            return {
-              content: `Proyecto "${proyecto}" no está enlazado. Enlazados: ${projects
-                .map((project) => project.id)
-                .join(", ")}`,
-            }
-          }
+          const { selected, error } = seleccionar(projects, proyecto)
+          if (error) return { content: error }
 
           await context.progress({ status: `Leyendo ${selected.length} proyecto(s)` })
 
@@ -273,6 +283,111 @@ export default Plugin.define({
             out.push("")
           }
 
+          return { content: out.join("\n") }
+        },
+      })
+
+      editor.add({
+        name: "salud",
+        description:
+          "Comprueba la SALUD de los proyectos enlazados (solo existencia y frescura de sus archivos de estado) y " +
+          "devuelve un diagnóstico compacto: ✅ sano / ⏳ obsoleto (archivo con más de maxAgeMinutes, por defecto 240) / " +
+          "🚨 caído (ruta o archivo ausente), con tabla resumen arriba y detalle debajo. Úsala para /jarvis-salud o " +
+          "cuando pidan un diagnóstico rápido del sistema.",
+        input: {
+          type: "object",
+          properties: {
+            proyecto: {
+              type: "string",
+              description: "Filtro opcional: id o nombre parcial de un proyecto (p. ej. \"trading\").",
+            },
+          },
+          additionalProperties: false,
+        },
+        options: { namespace: "jarvis" },
+        execute: async (input, context) => {
+          const { proyecto } = input as { proyecto?: string }
+          const projects = registry()
+
+          if (!projects.length) {
+            return {
+              content:
+                "El Jarvis no tiene proyectos enlazados: nada que comprobar.\n\n" +
+                "Copia `jarvis.projects.example.json` a `jarvis.projects.json` en la raíz de este proyecto " +
+                "y ajusta las rutas. Guía: docs/INSTALACION.md",
+            }
+          }
+
+          const { selected, error } = seleccionar(projects, proyecto)
+          if (error) return { content: error }
+
+          await context.progress({ status: `Comprobando salud de ${selected.length} proyecto(s)` })
+
+          const tabla: string[] = []
+          const detalle: string[] = []
+          let sanos = 0
+          let obsoletos = 0
+          let caidos = 0
+
+          for (const project of selected) {
+            if (!existsSync(project.path)) {
+              caidos++
+              tabla.push(`| ${project.name} | 🚨 | ruta ausente |`)
+              detalle.push(`### ${project.name} — 🚨`, "", `- Ruta no encontrada: \`${project.path}\``, "")
+              continue
+            }
+
+            const maxAge = project.maxAgeMinutes ?? 240
+            const motivos: string[] = []
+            let veredicto: "✅" | "⏳" | "🚨" = "✅"
+            const lineas: string[] = []
+
+            for (const relative of project.files) {
+              const absolute = resolve(project.path, relative)
+              if (!existsSync(absolute)) {
+                veredicto = "🚨"
+                motivos.push(`falta ${relative}`)
+                lineas.push(`- \`${relative}\` — 🚨 no existe`)
+                continue
+              }
+              const age = Math.round((Date.now() - statSync(absolute).mtimeMs) / 60000)
+              if (age > maxAge) {
+                if (veredicto !== "🚨") veredicto = "⏳"
+                motivos.push(`${relative}: hace ${age} min (> ${maxAge})`)
+                lineas.push(`- \`${relative}\` — ⏳ hace ${age} min (máx ${maxAge})`)
+              } else {
+                lineas.push(`- \`${relative}\` — ✅ hace ${age} min (máx ${maxAge})`)
+              }
+            }
+
+            if (veredicto === "✅") sanos++
+            else if (veredicto === "⏳") obsoletos++
+            else caidos++
+            tabla.push(
+              `| ${project.name} | ${veredicto} | ${motivos.length ? motivos.join("; ") : `${project.files.length}/${project.files.length} sanos`} |`,
+            )
+            detalle.push(`### ${project.name} — ${veredicto}`, "", ...lineas, "")
+          }
+
+          const global = caidos > 0 ? "🚨" : obsoletos > 0 ? "⏳" : "✅"
+          const out = [
+            "# Salud — Jarvis",
+            "",
+            `_Generado: ${new Date().toISOString()}_`,
+            "",
+            "| Proyecto | Veredicto | Detalle |",
+            "|---|---|---|",
+            ...tabla,
+            "",
+            ...detalle,
+            `**Veredicto global: ${global}** — sanos ${sanos} · obsoletos ${obsoletos} · caídos ${caidos}`,
+            "",
+            caidos > 0
+              ? "Hay proyectos caídos: si quieres avisar por Telegram, pídelo con `/alerta <texto>` (no se envía solo)."
+              : obsoletos > 0
+                ? "Archivos obsoletos no son incidencia crítica: pueden esperar al siguiente ciclo del proyecto."
+                : "Todo sano: los proyectos enlazados se actualizan dentro de su cadencia esperada.",
+          ]
           return { content: out.join("\n") }
         },
       })
@@ -349,6 +464,32 @@ export default Plugin.define({
               "- Estructura de la respuesta: (1) una línea por proyecto con su estado actual,",
               "  (2) alertas o desajustes detectados, (3) qué harías a continuación.",
               "- Si un archivo está desactualizado (>4 h) o falta, dilo explícitamente.",
+              "",
+              "--- Petición original del usuario ---",
+              prompt.text || "(sin texto adicional)",
+            ].join("\n"),
+          })
+        },
+      })
+
+      editor.add({
+        name: "jarvis-salud",
+        description: "Diagnóstico rápido de salud de todos los proyectos enlazados (solo lectura)",
+        execute: async ({ sessionID, prompt, delivery }) => {
+          await ctx.session.prompt({
+            ...prompt,
+            sessionID,
+            delivery,
+            text: [
+              "Comprueba la salud de TODOS los proyectos enlazados con la herramienta `jarvis_salud` (sin filtro).",
+              "",
+              "Reglas:",
+              "- **Solo lectura**: no modifiques, crees ni borres nada; la herramienta solo lee archivos de estado.",
+              "- Estructura de la respuesta: (1) tabla resumen proyecto → veredicto (✅ sano / ⏳ obsoleto / 🚨 caído),",
+              "  (2) detalle de lo que falla y por qué (ruta ausente, archivo con más de su maxAgeMinutes),",
+              "  (3) si hay 🚨, sugiere `/alerta <texto>` pero NO envíes la alerta sin que el usuario lo pida.",
+              "- Un archivo obsoleto NO es incidencia crítica si su proyecto puede estar fuera de su horario;",
+              "  dilo con calma y no asumas fallo.",
               "",
               "--- Petición original del usuario ---",
               prompt.text || "(sin texto adicional)",

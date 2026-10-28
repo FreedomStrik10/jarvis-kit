@@ -17,3 +17,11 @@ dist/
 # Sistema
 Thumbs.db
 .DS_Store
+
+# Python ( Jarvis de voz )
+__pycache__/
+*.pyc
+
+# Estado volatil del Jarvis de voz: memoria de la charla y modo repliegue.
+# Cada equipo lo crea en su primera interaccion.
+voz/estado-voz.json

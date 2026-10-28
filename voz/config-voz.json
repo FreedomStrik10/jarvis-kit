@@ -1,0 +1,10 @@
+{
+  "voz_tts": "es-ES-AlvaroNeural",
+  "modelo_whisper": "small",
+  "idioma_whisper": "es",
+  "umbral_despertar": 0.5,
+  "timeout_cerebro_s": 240,
+  "carpeta_cerebro": "",
+  "ruta_cli_opencode": "",
+  "ruta_ffplay": ""
+}
